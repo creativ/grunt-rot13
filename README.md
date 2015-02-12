@@ -37,11 +37,29 @@ grunt.initConfig({
 
 ### Options
 
+#### options.encryptionBase
+Type: `Number`
+Default value: `13`
+
+Encryption algorithm base.
+
 #### options.prependDecodeFunction
 Type: `Boolean`
 Default value: `true`
 
 Append decode function or not.
+
+#### options.decodeFunctionName
+Type: `String`
+Default value: `'rot'`
+
+Appended decode function name.
+
+#### options.decodeFunctionName
+Type: `Boolean`
+Default value: `false`
+
+Generates random base for each encrypted string.
 
 ### Usage Examples
 
@@ -50,6 +68,8 @@ grunt.initConfig({
   rot13: {
     options: {
       prependDecodeFunction: true
+      decodeFunctionName: 'zqr',
+      encryptionBase: 10
     },
     build: {
       src: 'src/build.js',
@@ -64,4 +84,5 @@ In lieu of a formal styleguide, take care to maintain the existing coding style.
 
 ## Release History
 
+* 2015-02-12   v0.1.2   Additional encryption options were added
 * 2015-02-11   v0.1.0   Release ROT-13 encrypt task

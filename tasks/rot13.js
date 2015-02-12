@@ -18,7 +18,10 @@ module.exports = function(grunt) {
 
   grunt.registerMultiTask('rot13', 'Encrypt strings in file with ROT-13 algorithm.', function() {
     var options = this.options({
-      prependDecodeFunction: true
+      prependDecodeFunction: true,
+      decodeFunctionName: 'rot',
+      encryptionBase: 13,
+      randomBase: false
     });
 
     this.files.forEach(function(f) {
@@ -34,17 +37,28 @@ module.exports = function(grunt) {
             literalsCount++;
             if(literalsCount % 2 != 0) return node;
 
+            var encryptionBase = options.encryptionBase;
+            if(options.randomBase) {
+              encryptionBase = Math.floor(Math.random() * (26 - 1 + 1)) + 1;
+            }
+
+            var decryptionBase = 26 - encryptionBase;
+
             // Wrap encrypted string with decrypt function
             node = {
               type: 'CallExpression',
               callee: {
                 type: 'Identifier',
-                name: 'rot'
+                name: options.decodeFunctionName
               },
               arguments: [{
                 type: 'Literal',
-                value: rot(node.value),
-                raw: rot(node.value)
+                value: rot(node.value, encryptionBase),
+                raw: rot(node.value, encryptionBase)
+              }, {
+                type: 'Literal',
+                value: decryptionBase,
+                raw: decryptionBase
               }]
             };
             return node;
@@ -55,7 +69,7 @@ module.exports = function(grunt) {
       // ROT-13 decode function
       var prependCode = '';
       if(options.prependDecodeFunction == true) {
-        prependCode = 'var lowercase="abcdefghijklmnopqrstuvwxyz",uppercase="ABCDEFGHIJKLMNOPQRSTUVWXYZ",regexLowercase=/[a-z]/,regexUppercase=/[A-Z]/,rot=function(e,r){if(null==r&&(r=13),r=Number(r),e=String(e),0==r)return e;0>r&&(r+=26);for(var a,c,t,s=e.length,p=-1,n="";++p<s;)a=e.charAt(p),regexLowercase.test(a)?(c=lowercase.indexOf(a),t=(c+r)%26,n+=lowercase.charAt(t)):regexUppercase.test(a)?(c=uppercase.indexOf(a),t=(c+r)%26,n+=uppercase.charAt(t)):n+=a;return n}\n';
+        prependCode = 'var lowercase="abcdefghijklmnopqrstuvwxyz",uppercase="ABCDEFGHIJKLMNOPQRSTUVWXYZ",regexLowercase=/[a-z]/,regexUppercase=/[A-Z]/,'+ options.decodeFunctionName + '=function(e,r){if(null==r&&(r=13),r=Number(r),e=String(e),0==r)return e;0>r&&(r+=26);for(var a,c,t,s=e.length,p=-1,n="";++p<s;)a=e.charAt(p),regexLowercase.test(a)?(c=lowercase.indexOf(a),t=(c+r)%26,n+=lowercase.charAt(t)):regexUppercase.test(a)?(c=uppercase.indexOf(a),t=(c+r)%26,n+=uppercase.charAt(t)):n+=a;return n}\n';
       }
 
       // Generate new file from modified AST
