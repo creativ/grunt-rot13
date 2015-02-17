@@ -39,7 +39,7 @@ module.exports = function(grunt) {
 
             var encryptionBase = options.encryptionBase;
             if(options.randomBase) {
-              encryptionBase = Math.floor(Math.random() * (26 - 1 + 1)) + 1;
+              encryptionBase = Math.floor(Math.random() * (25 - 1 + 1)) + 1;
             }
 
             var decryptionBase = 26 - encryptionBase;

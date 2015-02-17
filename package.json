@@ -1,6 +1,6 @@
 {
   "name": "grunt-rot13",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Encrypt strings in file with ROT-13 algorithm.",
   "keywords": [
     "gruntplugin",
